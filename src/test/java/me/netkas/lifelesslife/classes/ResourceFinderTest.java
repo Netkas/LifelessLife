@@ -63,7 +63,8 @@ public class ResourceFinderTest {
         assertNull(resourceContent, "Resource content should be null if path is empty");
     }
 
-    /**
+    /**ecords
+     * 
      * This method tests a valid instance of a resource definition.
      * A valid instance should result in a non-empty list return.
      */
