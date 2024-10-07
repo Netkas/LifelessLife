@@ -31,11 +31,9 @@ MAIN_STREETS:
   - default_locale: "en"
   - locales:
     - "en"
-    - "fr"
 
 STREET_NAMES:
   - folder: "names/street_names"
   - default_locale: "en"
   - locales:
     - "en"
-    - "fr"
