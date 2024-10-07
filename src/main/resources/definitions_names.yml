@@ -1,39 +1,39 @@
 FEMALE_FIRST_NAMES:
-  - folder: "names/female_first_names"
-  - default_locale: "en"
-  - locales:
-      - "en"
-      - "fr"
+  folder: "names/female_first_names"
+  default_locale: "en"
+  locales:
+    - "en"
+    - "fr"
 
 FEMALE_LAST_NAMES:
-  - folder: "names/female_last_names"
-  - default_locale: "en"
-  - locales:
-      - "en"
-      - "fr"
+  folder: "names/female_last_names"
+  default_locale: "en"
+  locales:
+    - "en"
+    - "fr"
 
 MALE_FIRST_NAMES:
-  - folder: "names/male_first_names"
-  - default_locale: "en"
-  - locales:
-      - "en"
-      - "fr"
+  folder: "names/male_first_names"
+  default_locale: "en"
+  locales:
+    - "en"
+    - "fr"
 
 MALE_LAST_NAMES:
-  - folder: "names/male_last_names"
-  - default_locale: "en"
-  - locales:
+  folder: "names/male_last_names"
+  default_locale: "en"
+  locales:
     - "en"
     - "fr"
 
 MAIN_STREETS:
-  - folder: "names/main_streets"
-  - default_locale: "en"
-  - locales:
+  folder: "names/main_streets"
+  default_locale: "en"
+  locales:
     - "en"
 
 STREET_NAMES:
-  - folder: "names/street_names"
-  - default_locale: "en"
-  - locales:
+  folder: "names/street_names"
+  default_locale: "en"
+  locales:
     - "en"

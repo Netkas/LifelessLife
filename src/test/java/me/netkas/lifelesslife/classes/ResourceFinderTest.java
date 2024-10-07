@@ -88,4 +88,15 @@ public class ResourceFinderTest {
             ResourceFinder.getResourceDefinitions(null);
         });
     }
+
+    @Test
+    public void testResourceRead() {
+        List<ResourceDefinition> resourceDefinitions =
+                ResourceFinder.getResourceDefinitions(ResourceDefinitions.NAMES);
+
+        for(ResourceDefinition resource : resourceDefinitions)
+        {
+            System.out.println(resource.readResource());
+        }
+    }
 }

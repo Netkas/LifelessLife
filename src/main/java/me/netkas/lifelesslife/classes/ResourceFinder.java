@@ -21,7 +21,7 @@ public final class ResourceFinder
      * @param path the path to the resource to be retrieved
      * @return an InputStream of the resource or null if the path is invalid, empty, or the resource does not exist
      */
-    public static InputStream getResource(String path)
+    public static InputStream   getResource(String path)
     {
         if (path == null)
         {
@@ -71,9 +71,18 @@ public final class ResourceFinder
         }
     }
 
+    /**
+     * Retrieves a list of resource definitions from a specified YAML file.
+     *
+     * @param resourceDefinition the resource definition enum that specifies the path to the YAML file
+     * @return a list of parsed {@link ResourceDefinition} objects from the YAML file
+     * @throws NullPointerException if the provided resource definition is null
+     * @throws RuntimeException if there is an error reading or parsing the YAML file
+     */
+    @SuppressWarnings("unchecked")
     public static List<ResourceDefinition> getResourceDefinitions(ResourceDefinitions resourceDefinition)
     {
-        if(resourceDefinition == null)
+        if (resourceDefinition == null)
         {
             throw new NullPointerException("The resource definition cannot be null.");
         }
@@ -84,12 +93,18 @@ public final class ResourceFinder
             if (input != null)
             {
                 final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-                final TypeReference<Map<String, List<ResourceDefinition>>> typeRef = new TypeReference<>() {};
-                final Map<String, List<ResourceDefinition>> definitions = mapper.readValue(input, typeRef);
+                // Creating TypeReference for Map<String, Object>
+                final TypeReference<Map<String, Object>> typeRef = new TypeReference<>() {};
+                final Map<String, Object> definitions = mapper.readValue(input, typeRef);
 
-                for (Map.Entry<String, List<ResourceDefinition>> entry : definitions.entrySet())
+                // Convert Map into List of ResourceDefinition
+                for (Map.Entry<String, Object> entry : definitions.entrySet())
                 {
-                    resourceDefinitions.addAll(entry.getValue());
+                    if (entry.getValue() instanceof Map)
+                    {
+                        ResourceDefinition resourceDef = new ResourceDefinition((Map<String, Object>) entry.getValue());
+                        resourceDefinitions.add(resourceDef);
+                    }
                 }
             }
         }
