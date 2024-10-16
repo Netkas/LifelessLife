@@ -103,6 +103,32 @@ public class AreaChunk
         return false;
     }
 
+    public boolean regionTypeExists(Point point, AreaRegionType type)
+    {
+        for (AreaRegion region : getRegions(type))
+        {
+            if (region.getRegion().contains(point))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean regionTypeExists(Point point, List<AreaRegionType> types)
+    {
+        for (AreaRegionType type : types)
+        {
+            if (regionTypeExists(point, type))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public LineRegion getEdge(CardinalDirection direction)
     {
         return switch (direction)

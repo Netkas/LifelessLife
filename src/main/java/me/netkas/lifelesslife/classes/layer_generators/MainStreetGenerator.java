@@ -54,7 +54,7 @@ public class MainStreetGenerator extends LayerGenerator
             boolean conflict = false;
             for(Point point : chunk.traverseDirection(startingPoint, roadDirection.getLeft(), random.nextInt(18, 25), false).getPoints())
             {
-                if(!chunk.inBounds(point) || chunk.regionExists(point))
+                if(!chunk.inBounds(point) || chunk.regionTypeExists(point, AreaRegionType.MAIN_STREET))
                 {
                     this.logger.finest(String.format("Conflict at point: %s", point));
                     conflict = true;
@@ -70,7 +70,7 @@ public class MainStreetGenerator extends LayerGenerator
 
             for(Point point : chunk.traverseDirection(startingPoint, roadDirection.getRight(), random.nextInt(18, 25), false).getPoints())
             {
-                if(!chunk.inBounds(point) || chunk.regionExists(point))
+                if(!chunk.inBounds(point) || chunk.regionTypeExists(point, AreaRegionType.MAIN_STREET))
                 {
                     this.logger.finest(String.format("Conflict at point: %s", point));
                     conflict = true;
