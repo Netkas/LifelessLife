@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public final class ResourceDefinition
+public final class ResourceNamedDefinition
 {
     private final String folder;
     private final String defaultLocale;
@@ -20,7 +20,7 @@ public final class ResourceDefinition
      * @param defaultLocale the default locale to be used for resources
      * @param locales the list of supported locales
      */
-    public ResourceDefinition(String folder, String defaultLocale, List<String> locales)
+    public ResourceNamedDefinition(String folder, String defaultLocale, List<String> locales)
     {
         this.folder = folder;
         this.defaultLocale = defaultLocale;
@@ -36,7 +36,7 @@ public final class ResourceDefinition
      *             "locales" (List<String>) - list of supported locales.
      */
     @SuppressWarnings("unchecked")
-    public ResourceDefinition(Map<String, Object> data)
+    public ResourceNamedDefinition(Map<String, Object> data)
     {
         this.folder = (String) data.getOrDefault("folder", null);
         this.defaultLocale = (String) data.getOrDefault("default_locale", null);

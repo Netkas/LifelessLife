@@ -4,11 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import me.netkas.lifelesslife.enums.ResourceDefinitions;
-import me.netkas.lifelesslife.objects.ResourceDefinition;
+import me.netkas.lifelesslife.enums.resources.NameResources;
+import me.netkas.lifelesslife.objects.ResourceNamedDefinition;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public final class ResourceFinder
@@ -21,7 +21,7 @@ public final class ResourceFinder
      * @param path the path to the resource to be retrieved
      * @return an InputStream of the resource or null if the path is invalid, empty, or the resource does not exist
      */
-    public static InputStream   getResource(String path)
+    public static InputStream getResource(String path)
     {
         if (path == null)
         {
@@ -74,21 +74,15 @@ public final class ResourceFinder
     /**
      * Retrieves a list of resource definitions from a specified YAML file.
      *
-     * @param resourceDefinition the resource definition enum that specifies the path to the YAML file
-     * @return a list of parsed {@link ResourceDefinition} objects from the YAML file
+     * @return  a list of parsed {@link ResourceNamedDefinition} objects from the YAML file
      * @throws NullPointerException if the provided resource definition is null
      * @throws RuntimeException if there is an error reading or parsing the YAML file
      */
     @SuppressWarnings("unchecked")
-    public static List<ResourceDefinition> getResourceDefinitions(ResourceDefinitions resourceDefinition)
+    public static Map<NameResources, ResourceNamedDefinition> getNamedResourceDefinitions()
     {
-        if (resourceDefinition == null)
-        {
-            throw new NullPointerException("The resource definition cannot be null.");
-        }
-
-        final List<ResourceDefinition> resourceDefinitions = new ArrayList<>();
-        try (InputStream input = getResource(resourceDefinition.getPath()))
+        final Map<NameResources, ResourceNamedDefinition> resourceDefinitions = new HashMap<>();
+        try (InputStream input = getResource(ResourceDefinitions.NAMES.getPath()))
         {
             if (input != null)
             {
@@ -102,8 +96,8 @@ public final class ResourceFinder
                 {
                     if (entry.getValue() instanceof Map)
                     {
-                        ResourceDefinition resourceDef = new ResourceDefinition((Map<String, Object>) entry.getValue());
-                        resourceDefinitions.add(resourceDef);
+                        ResourceNamedDefinition resourceDef = new ResourceNamedDefinition((Map<String, Object>) entry.getValue());
+                        resourceDefinitions.put(NameResources.valueOf(entry.getKey()), resourceDef);
                     }
                 }
             }
@@ -115,5 +109,4 @@ public final class ResourceFinder
 
         return resourceDefinitions;
     }
-
 }

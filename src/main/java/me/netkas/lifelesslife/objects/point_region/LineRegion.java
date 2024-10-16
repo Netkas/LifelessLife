@@ -1,5 +1,6 @@
 package me.netkas.lifelesslife.objects.point_region;
 
+import me.netkas.lifelesslife.abstracts.AreaRegion;
 import me.netkas.lifelesslife.enums.Orientation;
 import me.netkas.lifelesslife.interfaces.RegionInterface;
 import me.netkas.lifelesslife.records.Point;
@@ -170,6 +171,18 @@ public record LineRegion(Point start, Point end) implements RegionInterface
     }
 
     /**
+     * Determines if the region contains the specified area region.
+     *
+     * @param areaRegion the AreaRegion object to check
+     * @return true if the region contains the specified area region, false otherwise
+     */
+    @Override
+    public boolean contains(AreaRegion areaRegion)
+    {
+        return this.contains(areaRegion.getRegion());
+    }
+
+    /**
      * Returns a random point from the list of points.
      *
      * @param random the RandomGenerator object used to generate the random index
@@ -178,13 +191,18 @@ public record LineRegion(Point start, Point end) implements RegionInterface
     @Override
     public Point getRandom(Random random)
     {
+        int minY = Math.min(this.start.y(), this.end.y());
+        int maxY = Math.max(this.start.y(), this.end.y());
+        int minX = Math.min(this.start.x(), this.end.x());
+        int maxX = Math.max(this.start.x(), this.end.x());
+
         if (this.getOrientation() == Orientation.VERTICAL)
         {
-            return new Point(this.start.x(), random.nextInt(this.getHeight()) + Math.min(this.start.y(), this.end.y()));
+            return new Point(this.start.x(), random.nextInt((maxY - minY + 1)) + minY);
         }
         else
         {
-            return new Point(random.nextInt(this.getWidth()) + Math.min(this.start.x(), this.end.x()), this.start.y());
+            return new Point(random.nextInt((maxX - minX + 1)) + minX, this.start.y());
         }
     }
 

@@ -1,6 +1,7 @@
 package me.netkas.lifelesslife.objects.point_region;
 
 
+import me.netkas.lifelesslife.abstracts.AreaRegion;
 import me.netkas.lifelesslife.enums.Orientation;
 import me.netkas.lifelesslife.interfaces.RegionInterface;
 import me.netkas.lifelesslife.records.Point;
@@ -155,6 +156,17 @@ public record BoundingBoxRegion(Point topLeft, Point bottomRight) implements Reg
         return false;
     }
 
+    /**
+     * Determines if the region contains the specified area region.
+     *
+     * @param areaRegion the AreaRegion object to check
+     * @return true if the region contains the specified area region, false otherwise
+     */
+    @Override
+    public boolean contains(AreaRegion areaRegion)
+    {
+        return this.contains(areaRegion.getRegion());
+    }
 
     /**
      * Returns a random point within the bounding box region.

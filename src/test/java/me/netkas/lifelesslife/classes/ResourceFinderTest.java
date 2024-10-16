@@ -1,12 +1,11 @@
 package me.netkas.lifelesslife.classes;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
+import java.util.Map;
 
-import me.netkas.lifelesslife.enums.ResourceDefinitions;
-import me.netkas.lifelesslife.objects.ResourceDefinition;
+import me.netkas.lifelesslife.enums.resources.NameResources;
+import me.netkas.lifelesslife.objects.ResourceNamedDefinition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,34 +68,38 @@ public class ResourceFinderTest {
      * A valid instance should result in a non-empty list return.
      */
     @Test
-    public void testGetResourceDefinitionsValidResource() {
-        List<ResourceDefinition> resourceDefinitions =
-                ResourceFinder.getResourceDefinitions(ResourceDefinitions.NAMES);
+    public void testGetResourceDefinitionsValidNamedResource() {
+        Map<NameResources, ResourceNamedDefinition> resourceDefinitions =
+                ResourceFinder.getNamedResourceDefinitions();
 
         assertFalse(resourceDefinitions.isEmpty(),
                 "Resource definitions should not be empty for valid resource");
     }
 
-    /**
-     * This method tests null as resource definition.
-     * Null should result in an empty list return.
-     */
-    @Test
-    public void testGetResourceDefinitionsNullResource() {
-        // Exception expected
-        assertThrows(NullPointerException.class, () -> {
-            ResourceFinder.getResourceDefinitions(null);
-        });
-    }
 
     @Test
     public void testResourceRead() {
-        List<ResourceDefinition> resourceDefinitions =
-                ResourceFinder.getResourceDefinitions(ResourceDefinitions.NAMES);
+        Map<NameResources, ResourceNamedDefinition> resourceDefinitions =
+                ResourceFinder.getNamedResourceDefinitions();
 
-        for(ResourceDefinition resource : resourceDefinitions)
-        {
-            System.out.println(resource.readResource());
+        for(Map.Entry<NameResources, ResourceNamedDefinition> entry : resourceDefinitions.entrySet()) {
+            ResourceNamedDefinition resourceNamedDefinition = entry.getValue();
+            assertNotNull(entry.getValue(), "Resource name should not be null");
+            System.out.println("Resource: " + resourceNamedDefinition.getFolder());
+
+            InputStream resource = resourceNamedDefinition.getResource();
+            assertNotNull(resource, "Resource should not be null");
+
+            try
+            {
+                while (resource.available() > 0) {
+                    System.out.print((char) resource.read());
+                }
+            }
+            catch(IOException e)
+            {
+                fail("IOException occurred while reading resource", e);
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package me.netkas.lifelesslife.interfaces;
 
 
+import me.netkas.lifelesslife.abstracts.AreaRegion;
 import me.netkas.lifelesslife.records.Point;
 
 import java.util.List;
@@ -66,6 +67,14 @@ public interface RegionInterface
      * @return true if the region contains the specified region, false otherwise
      */
     boolean contains(RegionInterface region);
+
+    /**
+     * Determines if the region contains the specified area region.
+     *
+     * @param areaRegion the AreaRegion object to check
+     * @return true if the region contains the specified area region, false otherwise
+     */
+    boolean contains(AreaRegion areaRegion);
 
     /**
      * Returns a random point from the list of points.

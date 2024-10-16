@@ -1,6 +1,6 @@
 package me.netkas.lifelesslife.classes;
 
-import java.util.*;
+import java.util.Random;
 
 public final class RandomGenerator
 {
