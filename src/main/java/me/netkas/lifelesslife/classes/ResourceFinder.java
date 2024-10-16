@@ -74,7 +74,7 @@ public final class ResourceFinder
     /**
      * Retrieves a list of resource definitions from a specified YAML file.
      *
-     * @return  a list of parsed {@link ResourceNamedDefinition} objects from the YAML file
+     * @return  a map of parsed {@link ResourceNamedDefinition} objects from the YAML file
      * @throws NullPointerException if the provided resource definition is null
      * @throws RuntimeException if there is an error reading or parsing the YAML file
      */
