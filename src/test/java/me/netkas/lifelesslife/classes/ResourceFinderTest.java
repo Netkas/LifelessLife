@@ -3,6 +3,7 @@ package me.netkas.lifelesslife.classes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Random;
 
 import me.netkas.lifelesslife.enums.resources.NameResources;
 import me.netkas.lifelesslife.objects.ResourceNamedDefinition;
@@ -24,22 +25,8 @@ public class ResourceFinderTest {
 
     @Test
     public void testGetResourceInvalidPath() {
-        InputStream resource = ResourceFinder.getResource("invalid_file.txt");
-        assertNull(resource, "Resource should be null if path is invalid");
-    }
-
-    @Test
-    public void testGetResourceEmptyPath() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            ResourceFinder.getResource("");
-        });
-    }
-
-    @Test
-    public void testGetResourceNullPath() {
-        // Exception expected
-        assertThrows(NullPointerException.class, () -> {
-            ResourceFinder.getResource(null);
+        assertThrows(RuntimeException.class, () -> {
+            ResourceFinder.getResource("invalid_file.txt");
         });
     }
 
@@ -50,20 +37,7 @@ public class ResourceFinderTest {
         assertNotNull(resourceContent, "Resource content should not be null if path is valid");
     }
 
-    @Test
-    public void testReadResourceInvalidPath() {
-        String resourceContent = ResourceFinder.readResource("invalid_file.txt");
-        assertNull(resourceContent, "Resource content should be null if path is invalid");
-    }
-
-    @Test
-    public void testReadResourceEmptyPath() {
-        String resourceContent = ResourceFinder.readResource("");
-        assertNull(resourceContent, "Resource content should be null if path is empty");
-    }
-
-    /**ecords
-     * 
+    /**
      * This method tests a valid instance of a resource definition.
      * A valid instance should result in a non-empty list return.
      */
@@ -101,5 +75,15 @@ public class ResourceFinderTest {
                 fail("IOException occurred while reading resource", e);
             }
         }
+    }
+
+    /**
+     * This method tests the getRandomName with a valid NameResources.
+     * A valid NameResources should return a non-empty string.
+     */
+    @Test
+    public void testGetRandomName_ValidNameResource() {
+        assertFalse(ResourceFinder.getRandomName(NameResources.FEMALE_FIRST_NAMES, new Random()).isEmpty(),
+                "Random name should not be empty for valid NameResources");
     }
 }

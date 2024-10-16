@@ -1,9 +1,11 @@
 package me.netkas.lifelesslife.classes.layer_generators;
 
 import me.netkas.lifelesslife.abstracts.LayerGenerator;
+import me.netkas.lifelesslife.classes.ResourceFinder;
 import me.netkas.lifelesslife.enums.AreaRegionType;
 import me.netkas.lifelesslife.enums.CardinalDirection;
 import me.netkas.lifelesslife.enums.DensityLevel;
+import me.netkas.lifelesslife.enums.resources.NameResources;
 import me.netkas.lifelesslife.objects.AreaChunk;
 import me.netkas.lifelesslife.objects.area_region.MainStreetRegion;
 import me.netkas.lifelesslife.objects.point_region.LineRegion;
@@ -27,7 +29,8 @@ public class MainStreetGenerator extends LayerGenerator
     @Override
     public void generateLayer(AreaChunk chunk, DensityLevel level, Random random)
     {
-        while(chunk.getRegionUsage(AreaRegionType.MAIN_STREET) < level.getMainStreetDensity())
+        int failedAttempts = 0;
+        while((chunk.getRegionUsage(AreaRegionType.MAIN_STREET) < level.getMainStreetDensity()) && (failedAttempts < 100))
         {
             this.logger.info(String.format("Main Street Occupation: %s/%s", chunk.getRegionUsage(AreaRegionType.MAIN_STREET), level.getMainStreetDensity()));
 
@@ -61,6 +64,7 @@ public class MainStreetGenerator extends LayerGenerator
 
             if(conflict)
             {
+                failedAttempts++;
                 continue;
             }
 
@@ -76,6 +80,7 @@ public class MainStreetGenerator extends LayerGenerator
 
             if(conflict)
             {
+                failedAttempts++;
                 continue;
             }
 
@@ -85,7 +90,13 @@ public class MainStreetGenerator extends LayerGenerator
 
             // Create the region
             this.logger.finest("Adding region to chunk.");
-            chunk.addRegion(new MainStreetRegion(road.start(), road.end(), roadDirection));
+            chunk.addRegion(new MainStreetRegion(road.start(), road.end(), roadDirection, ResourceFinder.getRandomName(NameResources.MAIN_STREETS, random)));
+            failedAttempts = 0;
+        }
+
+        if(failedAttempts >= 100)
+        {
+            this.logger.warning(String.format("Failed to generate main streets due to too many conflicts. Main Street Occupation: %s/%s", chunk.getRegionUsage(AreaRegionType.MAIN_STREET), level.getMainStreetDensity()));
         }
     }
 }

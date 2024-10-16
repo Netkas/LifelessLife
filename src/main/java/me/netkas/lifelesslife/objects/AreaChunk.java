@@ -107,10 +107,10 @@ public class AreaChunk
     {
         return switch (direction)
         {
-            case NORTH -> new LineRegion(new Point(0, 0), new Point(width - 1, 0));
-            case EAST -> new LineRegion(new Point(width - 1, 0), new Point(width - 1, height - 1));
-            case SOUTH -> new LineRegion(new Point(0, height - 1), new Point(width - 1, height - 1));
-            case WEST -> new LineRegion(new Point(0, 0), new Point(0, height - 1));
+            case NORTH -> new LineRegion(new Point(0, 0), new Point(width, 0));
+            case EAST -> new LineRegion(new Point(width, 0), new Point(width, height));
+            case SOUTH -> new LineRegion(new Point(0, height), new Point(width, height));
+            case WEST -> new LineRegion(new Point(0, 0), new Point(0, height));
         };
     }
 
