@@ -4,12 +4,10 @@ import me.netkas.lifelesslife.abstracts.AreaRegion;
 import me.netkas.lifelesslife.enums.AreaRegionType;
 import me.netkas.lifelesslife.enums.CardinalDirection;
 import me.netkas.lifelesslife.objects.point_region.LineRegion;
+import me.netkas.lifelesslife.objects.point_region.PointRegion;
 import me.netkas.lifelesslife.records.Point;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AreaChunk
 {
@@ -103,6 +101,11 @@ public class AreaChunk
         return false;
     }
 
+    public boolean regionTypeExists(AreaRegionType type)
+    {
+        return this.regions.containsKey(type);
+    }
+
     public boolean regionTypeExists(Point point, AreaRegionType type)
     {
         for (AreaRegion region : getRegions(type))
@@ -161,6 +164,18 @@ public class AreaChunk
         return ((double) usedArea / totalArea) * 100;
     }
 
+    public AreaRegion getRandomRegion(Random random)
+    {
+        List<AreaRegion> allRegions = getRegions();
+        return allRegions.get(random.nextInt(allRegions.size()));
+    }
+
+    public AreaRegion getRandomRegion(AreaRegionType type, Random random)
+    {
+        List<AreaRegion> typeRegions = getRegions(type);
+        return typeRegions.get(random.nextInt(typeRegions.size()));
+    }
+
     public boolean inBounds(Point point)
     {
         return point.x() >= 0 && point.x() < this.width && point.y() >= 0 && point.y() < this.height;
@@ -171,31 +186,35 @@ public class AreaChunk
         return (point.x() == 0 && point.y() == 0) || (point.x() == width - 1 && point.y() == 0) || (point.x() == 0 && point.y() == height - 1) || (point.x() == width - 1 && point.y() == height - 1);
     }
 
+    public boolean isEdge(Point point)
+    {
+        return point.x() == 0 || point.y() == 0 || point.x() == width - 1 || point.y() == height - 1;
+    }
 
     public LineRegion traverseDirection(Point point, CardinalDirection direction, int distance, boolean includeStart)
     {
-        if(includeStart)
+        final int startX = point.x();
+        final int startY = point.y();
+        int endX = startX;
+        int endY = startY;
+
+        switch (direction)
         {
-            return new LineRegion(point, switch (direction) {
-                case NORTH -> new Point(point.x(), point.y() - distance);
-                case EAST -> new Point(point.x() + distance, point.y());
-                case SOUTH -> new Point(point.x(), point.y() + distance);
-                case WEST -> new Point(point.x() - distance, point.y());
-            });
+            case NORTH -> endY = Math.max(startY - distance, 0);
+            case EAST -> endX = Math.min(startX + distance, width - 1);
+            case SOUTH -> endY = Math.min(startY + distance, height - 1);
+            case WEST -> endX = Math.max(startX - distance, 0);
         }
 
-        return new LineRegion(switch (direction) {
-            case NORTH -> new Point(point.x(), point.y() - 1);
-            case EAST -> new Point(point.x() + 1, point.y());
-            case SOUTH -> new Point(point.x(), point.y() + 1);
-            case WEST -> new Point(point.x() - 1, point.y());
-        },switch (direction)
+        Point start = includeStart ? point : switch (direction)
         {
-            case NORTH -> new Point(point.x(), point.y() - distance);
-            case EAST -> new Point(point.x() + distance, point.y());
-            case SOUTH -> new Point(point.x(), point.y() + distance);
-            case WEST -> new Point(point.x() - distance, point.y());
-        });
+            case NORTH -> new Point(startX, Math.max(startY - 1, 0));
+            case EAST -> new Point(Math.min(startX + 1, width - 1), startY);
+            case SOUTH -> new Point(startX, Math.min(startY + 1, height - 1));
+            case WEST -> new Point(Math.max(startX - 1, 0), startY);
+        };
+
+        return new LineRegion(start, new Point(endX, endY));
     }
 
     public LineRegion traverseDirection(Point point, CardinalDirection direction, boolean includeStart)
@@ -207,6 +226,38 @@ public class AreaChunk
             case SOUTH -> traverseDirection(point, CardinalDirection.SOUTH, height, includeStart);
             case WEST -> traverseDirection(point, CardinalDirection.WEST, width, includeStart);
         };
+    }
+
+    public PointRegion getNeighbors(Point point, CardinalDirection direction, int distance)
+    {
+        List<Point> points = new ArrayList<>();
+        for(Point traversedPoint : this.traverseDirection(point, direction.getLeft(), distance, false).getPoints())
+        {
+            if(!this.inBounds(traversedPoint))
+            {
+                break;
+            }
+
+            points.add(traversedPoint);
+        }
+
+        for(Point traversedPoint : this.traverseDirection(point, direction.getRight(), distance, false).getPoints())
+        {
+            if(!this.inBounds(traversedPoint))
+            {
+                break;
+            }
+
+            points.add(traversedPoint);
+        }
+
+        points.add(point);
+        return new PointRegion(points);
+    }
+
+    public Point getCenter()
+    {
+        return new Point(width / 2, height / 2);
     }
 
 }

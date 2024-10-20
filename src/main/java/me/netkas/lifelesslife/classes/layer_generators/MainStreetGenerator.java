@@ -15,6 +15,10 @@ import java.util.Random;
 
 public class MainStreetGenerator extends LayerGenerator
 {
+    private final static int MAX_FAILED_ATTEMPTS = 100;
+    private final static int MIN_DISTANCE = 18;
+    private final static int MAX_DISTANCE = 25;
+
     /**
      * Generates a layer of main streets within the given AreaChunk based on the
      * specified DensityLevel and Random instance.
@@ -30,7 +34,7 @@ public class MainStreetGenerator extends LayerGenerator
     public void generateLayer(AreaChunk chunk, DensityLevel level, Random random)
     {
         int failedAttempts = 0;
-        while((chunk.getRegionUsage(AreaRegionType.MAIN_STREET) < level.getMainStreetDensity()) && (failedAttempts < 100))
+        while((chunk.getRegionUsage(AreaRegionType.MAIN_STREET) < level.getMainStreetDensity()) && (failedAttempts < MAX_FAILED_ATTEMPTS))
         {
             this.logger.info(String.format("Main Street Occupation: %s/%s", chunk.getRegionUsage(AreaRegionType.MAIN_STREET), level.getMainStreetDensity()));
 
@@ -40,7 +44,6 @@ public class MainStreetGenerator extends LayerGenerator
             CardinalDirection roadDirection = startingEdge.opposite();
             // Get a random starting point from the starting edge
             Point startingPoint = chunk.getEdge(startingEdge).getRandom(random);
-
             this.logger.finest("Generated starting point: " + startingPoint);
 
             // First check if the starting point is already occupied
@@ -50,36 +53,9 @@ public class MainStreetGenerator extends LayerGenerator
                 continue;
             }
 
-            // Check the left and right of the starting point
-            boolean conflict = false;
-            for(Point point : chunk.traverseDirection(startingPoint, roadDirection.getLeft(), random.nextInt(18, 25), false).getPoints())
+            if(checkConflict(chunk, startingPoint, roadDirection, random.nextInt(MIN_DISTANCE, MAX_DISTANCE)))
             {
-                if(!chunk.inBounds(point) || chunk.regionTypeExists(point, AreaRegionType.MAIN_STREET))
-                {
-                    this.logger.finest(String.format("Conflict at point: %s", point));
-                    conflict = true;
-                    break;
-                }
-            }
-
-            if(conflict)
-            {
-                failedAttempts++;
-                continue;
-            }
-
-            for(Point point : chunk.traverseDirection(startingPoint, roadDirection.getRight(), random.nextInt(18, 25), false).getPoints())
-            {
-                if(!chunk.inBounds(point) || chunk.regionTypeExists(point, AreaRegionType.MAIN_STREET))
-                {
-                    this.logger.finest(String.format("Conflict at point: %s", point));
-                    conflict = true;
-                    break;
-                }
-            }
-
-            if(conflict)
-            {
+                this.logger.finest(String.format("Point %s has a conflict.", startingPoint));
                 failedAttempts++;
                 continue;
             }
@@ -94,9 +70,44 @@ public class MainStreetGenerator extends LayerGenerator
             failedAttempts = 0;
         }
 
-        if(failedAttempts >= 100)
+        if(failedAttempts >= MAX_FAILED_ATTEMPTS)
         {
             this.logger.warning(String.format("Failed to generate main streets due to too many conflicts. Main Street Occupation: %s/%s", chunk.getRegionUsage(AreaRegionType.MAIN_STREET), level.getMainStreetDensity()));
         }
+    }
+
+    private boolean checkConflict(AreaChunk chunk, Point startingPoint, CardinalDirection direction, int distance)
+    {
+        LineRegion leftTraversal = chunk.traverseDirection(startingPoint, direction.getLeft(), distance, false);
+
+        if(leftTraversal.size() < MIN_DISTANCE)
+        {
+            return true;
+        }
+
+        for(Point point : leftTraversal.getPoints())
+        {
+            if(!chunk.inBounds(point) || chunk.regionTypeExists(point, AreaRegionType.MAIN_STREET))
+            {
+                return true;
+            }
+        }
+
+        LineRegion rightTraversal = chunk.traverseDirection(startingPoint, direction.getRight(), distance, false);
+
+        if(rightTraversal.size() < MIN_DISTANCE)
+        {
+            return true;
+        }
+
+        for(Point point : rightTraversal.getPoints())
+        {
+            if(!chunk.inBounds(point) || chunk.regionTypeExists(point, AreaRegionType.MAIN_STREET))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

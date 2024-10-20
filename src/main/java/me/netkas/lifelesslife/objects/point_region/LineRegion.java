@@ -100,11 +100,89 @@ public record LineRegion(Point start, Point end) implements RegionInterface
      * @return a list of points ordered by their y-coordinate and x-coordinate
      */
     @Override
-    public List<Point> getPointsOrdered()
+    public List<Point> getPointsOrdered() 
     {
-        return this.getPoints();
+        List<Point> points = new ArrayList<>();
+
+        if (this.getOrientation() == Orientation.VERTICAL)
+        {
+            for (int y = Math.min(this.start.y(), this.end.y()); y <= Math.max(this.start.y(), this.end.y()); y++)
+            {
+                points.add(new Point(this.start.x(), y));
+            }
+        }
+        else
+        {
+            for (int x = Math.min(this.start.x(), this.end.x()); x <= Math.max(this.start.x(), this.end.x()); x++)
+            {
+                points.add(new Point(x, this.start.y()));
+            }
+        }
+
+        return points;
     }
 
+    public List<Point> getPointsOrdered(Point startFrom)
+    {
+        if (startFrom == null) {
+            return this.getPointsOrdered();
+        }
+
+        List<Point> points = new ArrayList<>();
+        boolean found = false;
+
+        if (this.getOrientation() == Orientation.VERTICAL)
+        {
+            int yStart = this.start.y();
+            int yEnd = this.end.y();
+
+            // Check the direction of traversal (bottom-to-top or top-to-bottom)
+            if (yStart > yEnd) {
+                for (int y = yStart; y >= yEnd; y--) {
+                    Point point = new Point(this.start.x(), y);
+                    if (found || point.equals(startFrom)) {
+                        points.add(point);
+                        found = true;
+                    }
+                }
+            } else {
+                for (int y = yStart; y <= yEnd; y++) {
+                    Point point = new Point(this.start.x(), y);
+                    if (found || point.equals(startFrom)) {
+                        points.add(point);
+                        found = true;
+                    }
+                }
+            }
+        }
+        else
+        {
+            int xStart = this.start.x();
+            int xEnd = this.end.x();
+
+            // Check the direction of traversal (right-to-left or left-to-right)
+            if (xStart > xEnd) {
+                for (int x = xStart; x >= xEnd; x--) {
+                    Point point = new Point(x, this.start.y());
+                    if (found || point.equals(startFrom)) {
+                        points.add(point);
+                        found = true;
+                    }
+                }
+            } else {
+                for (int x = xStart; x <= xEnd; x++) {
+                    Point point = new Point(x, this.start.y());
+                    if (found || point.equals(startFrom)) {
+                        points.add(point);
+                        found = true;
+                    }
+                }
+            }
+        }
+
+        return points;
+    }
+    
     /**
      * Checks if the given point is contained within the region.
      *

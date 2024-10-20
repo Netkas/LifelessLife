@@ -1,5 +1,6 @@
 package me.netkas.lifelesslife.enums;
 
+import javax.smartcardio.Card;
 import java.util.Random;
 
 public enum CardinalDirection
@@ -89,7 +90,6 @@ public enum CardinalDirection
     /**
      * Returns the cardinal direction that is to the right of the current cardinal direction.
      * The right direction is determined based on the current cardinal direction as follows:
-     *
      * - If the current cardinal direction is NORTH, the right direction is EAST.
      * - If the current cardinal direction is EAST, the right direction is SOUTH.
      * - If the current cardinal direction is SOUTH, the right direction is WEST.
@@ -106,6 +106,17 @@ public enum CardinalDirection
             case SOUTH -> WEST;
             case WEST -> NORTH;
         };
+    }
+
+    /**
+     * Returns a random cardinal direction that is either to the left or right of the current cardinal direction.
+     *
+     * @param random the Random object used to generate the random value
+     * @return a random cardinal direction that is either to the left or right of the current cardinal direction
+     */
+    public CardinalDirection getLeftOrRight(Random random)
+    {
+        return random.nextBoolean() ? getLeft() : getRight();
     }
 
     /**
